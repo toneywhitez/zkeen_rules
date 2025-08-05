@@ -1,0 +1,47 @@
+name: Fetch and Release GeoSite
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'   # Every Sunday at 00:00 UTC
+  workflow_dispatch:       # Also allows manual trigger
+
+jobs:
+  fetch-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # Needed for creating releases
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Run Go program to fetch and generate output
+        run: |
+          go run main.go -url https://github.com/jameszeroX/zkeen-domains/releases/latest/download/zkeen.dat -out output
+
+      - name: Get current timestamp
+        id: date
+        run: echo "now=$(date -u +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: lists-${{ steps.date.outputs.now }}
+          name: Lists ${{ steps.date.outputs.now }}
+          body: |
+            Auto-generated release on ${{ steps.date.outputs.now }} UTC.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload country .txt files as release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: lists-${{ steps.date.outputs.now }}
+          files: output/*.list
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
