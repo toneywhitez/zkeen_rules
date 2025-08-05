@@ -24,24 +24,25 @@ jobs:
         run: |
           go run main.go -url https://github.com/jameszeroX/zkeen-domains/releases/latest/download/zkeen.dat -out output
 
-      - name: Get current timestamp
-        id: date
-        run: echo "now=$(date -u +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+      - name: Create unique tag from timestamp and commit hash
+        id: uniq
+        run: |
+          echo "id=lists-$(date -u +%Y%m%d-%H%M%S)-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: lists-${{ steps.date.outputs.now }}
-          name: Lists ${{ steps.date.outputs.now }}
+          tag_name: ${{ steps.uniq.outputs.id }}
+          name: Lists ${{ steps.uniq.outputs.id }}
           body: |
-            Auto-generated release on ${{ steps.date.outputs.now }} UTC.
+            Auto-generated release on ${{ steps.uniq.outputs.id }}.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload country .txt files as release assets
+      - name: Upload .list files as release assets
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: lists-${{ steps.date.outputs.now }}
+          tag_name: ${{ steps.uniq.outputs.id }}
           files: output/*.list
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
