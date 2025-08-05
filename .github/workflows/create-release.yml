@@ -1,4 +1,4 @@
-name: Fetch and Release GeoSite
+name: Fetch and Release Lists
 
 on:
   schedule:
