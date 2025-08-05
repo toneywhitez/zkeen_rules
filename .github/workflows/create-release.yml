@@ -29,15 +29,15 @@ jobs:
         run: |
           echo "id=lists-$(date -u +%Y%m%d-%H%M%S)-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.uniq.outputs.id }}
-          name: Lists ${{ steps.uniq.outputs.id }}
-          body: |
-            Auto-generated release on ${{ steps.uniq.outputs.id }}.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Create GitHub release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: ${{ steps.uniq.outputs.id }}
+      #     name: Lists ${{ steps.uniq.outputs.id }}
+      #     body: |
+      #       Auto-generated release on ${{ steps.uniq.outputs.id }}.
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload .list files as release assets
         uses: softprops/action-gh-release@v2
