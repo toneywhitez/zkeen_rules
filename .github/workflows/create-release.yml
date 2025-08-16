@@ -27,10 +27,7 @@ jobs:
       - name: Create unique tag from timestamp and commit hash
         id: uniq
         run: |
-          TAG="GeoData_$(date -u +%Y%m%d)"          # валидный тег для Git
-          RELEASE_NAME="GeoData $(date -u +%Y.%m.%d)" # имя релиза
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-          echo "name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          echo "id=GeoData_$(date -u +%Y.%m.%d)" >> $GITHUB_OUTPUT
 
       # - name: Create GitHub release
       #   uses: softprops/action-gh-release@v2
