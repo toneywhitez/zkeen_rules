@@ -22,12 +22,12 @@ jobs:
 
       - name: Run Go program to fetch and generate output
         run: |
-          go run main.go  -geosite-urls "https://github.com/jameszeroX/zkeen-domains/releases/latest/download/zkeen.dat" -geoip-urls "https://github.com/jameszeroX/zkeen-ip/releases/latest/download/zk[...]
+          go run main.go  -geosite-urls "https://github.com/jameszeroX/zkeen-domains/releases/latest/download/zkeen.dat" -geoip-urls "https://github.com/jameszeroX/zkeen-ip/releases/latest/download/zkeenip.dat" -out output
 
-      - name: Create tag in required format
+      - name: Create unique tag from date
         id: uniq
         run: |
-          echo "id=lists_$(date -u +%d/%m/%y)" >> $GITHUB_OUTPUT
+          echo "id=lists_$(date -u +%Y%m%d)" >> $GITHUB_OUTPUT
 
       # - name: Create GitHub release
       #   uses: softprops/action-gh-release@v2
