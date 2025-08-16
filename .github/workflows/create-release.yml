@@ -2,14 +2,14 @@ name: Fetch and Release Lists
 
 on:
   schedule:
-    - cron: '0 0 * * 0'   # каждый воскресенье
-  workflow_dispatch:       # позволяет запускать вручную
+    - cron: '0 0 * * 0'   # Every Sunday at 00:00 UTC
+  workflow_dispatch:       # Also allows manual trigger
 
 jobs:
   fetch-and-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write  # Для создания релизов и пуша тегов
 
     steps:
       - name: Checkout repository
@@ -37,8 +37,10 @@ jobs:
             echo "Tag $TAG already exists"
           else
             git tag -a "$TAG" -m "Release for $(date -u +%Y-%m-%d)"
-            git push origin "$TAG"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "$TAG"
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
