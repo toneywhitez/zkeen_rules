@@ -22,26 +22,24 @@ jobs:
 
       - name: Run Go program to fetch and generate output
         run: |
-          go run main.go  -geosite-urls "https://github.com/jameszeroX/zkeen-domains/releases/latest/download/zkeen.dat" -geoip-urls "https://github.com/jameszeroX/zkeen-ip/releases/latest/download/zkeenip.dat" -out output
+          go run main.go \
+            -geosite-urls "https://github.com/jameszeroX/zkeen-domains/releases/latest/download/zkeen.dat" \
+            -geoip-urls "https://github.com/jameszeroX/zkeen-ip/releases/latest/download/zkeenip.dat" \
+            -out output
 
-      - name: Create unique tag from timestamp and commit hash
-        id: uniq
+      - name: Create tag from date
         run: |
-          echo "id=lists_$(date -u +%Y%m%d)" >> $GITHUB_OUTPUT
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          TAG="lists_$(date -u +%Y%m%d)"
+          git tag -a "$TAG" -m "Release for $(date -u +%Y-%m-%d)"
+          git push origin "$TAG"
 
-       - name: Create GitHub release
-         uses: softprops/action-gh-release@v2
-         with:
-          tag_name: lists_$(date -u +%Y%m%d)
-          name: lists_$(date -u +%Y%m%d)
-          files: output/*.list
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload .list files as release assets
+      - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.uniq.outputs.id }}
+          tag_name: lists_$(date -u +%Y%m%d)
+          name: lists_$(date -u +%Y%m%d)
           files: output/*.list
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
