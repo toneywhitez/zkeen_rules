@@ -27,7 +27,7 @@ jobs:
       - name: Create unique tag from timestamp and commit hash
         id: uniq
         run: |
-          echo "id=lists-$(date -u +%Y%m%d)" >> $GITHUB_OUTPUT
+          echo "id=lists-$(date -u +%Y.%m.%d)" >> $GITHUB_OUTPUT
 
       # - name: Create GitHub release
       #   uses: softprops/action-gh-release@v2
