@@ -2,14 +2,14 @@ name: Fetch and Release Lists
 
 on:
   schedule:
-    - cron: '0 0 * * 0'   # Every Sunday at 00:00 UTC
-  workflow_dispatch:       # Also allows manual trigger
+    - cron: '0 0 * * 0'   # каждый воскресенье
+  workflow_dispatch:       # позволяет запускать вручную
 
 jobs:
   fetch-and-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write      # Needed for creating releases
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -27,13 +27,18 @@ jobs:
             -geoip-urls "https://github.com/jameszeroX/zkeen-ip/releases/latest/download/zkeenip.dat" \
             -out output
 
-      - name: Create tag from date
+      - name: Create and push tag from date
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           TAG="lists_$(date -u +%Y%m%d)"
-          git tag -a "$TAG" -m "Release for $(date -u +%Y-%m-%d)"
-          git push origin "$TAG"
+          # Проверяем, существует ли уже тег
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists"
+          else
+            git tag -a "$TAG" -m "Release for $(date -u +%Y-%m-%d)"
+            git push origin "$TAG"
+          fi
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
