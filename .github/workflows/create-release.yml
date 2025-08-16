@@ -22,27 +22,23 @@ jobs:
 
       - name: Run Go program to fetch and generate output
         run: |
-          go run main.go  -geosite-urls "https://github.com/jameszeroX/zkeen-domains/releases/latest/download/zkeen.dat" -geoip-urls "https://github.com/jameszeroX/zkeen-ip/releases/latest/download/zkeenip.dat" -out output
+          go run main.go \
+            -geosite-urls "https://github.com/jameszeroX/zkeen-domains/releases/latest/download/zkeen.dat" \
+            -geoip-urls "https://github.com/jameszeroX/zkeen-ip/releases/latest/download/zkeenip.dat" \
+            -out output
 
       - name: Create unique tag from date
         id: uniq
         run: |
           echo "id=lists_$(date -u +%Y%m%d)" >> $GITHUB_OUTPUT
 
-      # - name: Create GitHub release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     tag_name: ${{ steps.uniq.outputs.id }}
-      #     name: Lists ${{ steps.uniq.outputs.id }}
-      #     body: |
-      #       Auto-generated release on ${{ steps.uniq.outputs.id }}.
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload .list files as release assets
+      - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.uniq.outputs.id }}
+          name: ${{ steps.uniq.outputs.id }}
+          body: |
+            Автоматически сгенерированный релиз от ${{ steps.uniq.outputs.id }}.
           files: output/*.list
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
